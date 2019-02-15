@@ -40,7 +40,7 @@ image:
 	@docker build -t $(APPNAME):$(VERSIONTAG)-$(GITCOMMITHASH) .
 
 test: build-linux
-	./build/linux/$(APPNAME) -t test/file.tpl -y test/values.yaml
-	grep "test1,test2,test3" test/file.yaml
+	./build/linux/$(APPNAME) -t test/file.tpl -y test/values.yaml -s txt
+	grep "test1,test2,test3" test/file.txt
 
 

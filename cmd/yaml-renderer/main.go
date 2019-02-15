@@ -19,6 +19,7 @@ var (
 	appversion    string
 	templateFile  string
 	yamlFile      string
+	suffix        string
 	renderedBytes bytes.Buffer
 )
 
@@ -29,6 +30,7 @@ func main() {
 
 	flag.StringVar(&templateFile, "t", "", "The path to the template file")
 	flag.StringVar(&yamlFile, "y", "", "The path to the yaml file with the data")
+	flag.StringVar(&suffix, "s", "", "Suffix for the rendered file.")
 
 	flag.Usage = func() {
 		fmt.Printf("%s - Render template with yaml input.\n", os.Args[0])
@@ -36,7 +38,15 @@ func main() {
 	}
 	flag.Parse()
 
-	outputFileName := strings.Replace(templateFile, ".tpl", ".yaml", 1)
+	if len(suffix) < 1 {
+		suffix = ".yaml"
+	}
+
+	if !strings.HasPrefix(suffix, ".") {
+		suffix = "." + suffix
+	}
+
+	outputFileName := strings.Replace(templateFile, ".tpl", suffix, 1)
 
 	outputFile, err := os.OpenFile(outputFileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 
