@@ -11,3 +11,5 @@
 *.exe
 .vscode/*
 build/*
+!test/templates/*
+manifests

@@ -42,5 +42,6 @@ image:
 test: build-linux
 	./build/linux/$(APPNAME) -o manifests -s txt -t test/templates -y test/values.yaml
 	grep "test1,test2,test3" manifests/file.txt
+	grep "foo-obj-name" manifests/file.txt
 
 
