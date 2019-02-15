@@ -3,3 +3,6 @@ data:
   name: "test runner 123"
   obj:
     name: "foo-obj-name"
+    env: $TESTVAR
+    num: 1234
+    notset: $NOTSETVAR

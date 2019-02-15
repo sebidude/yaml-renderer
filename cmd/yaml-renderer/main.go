@@ -108,6 +108,9 @@ func renderFile(inputfilename string) error {
 	if err != nil {
 		return err
 	}
+
+	getEnvVarForMapValue(&yamlData)
+
 	log.Printf("using template file %s", inputfilename)
 	content, err := ioutil.ReadFile(inputfilename)
 	if err != nil {
@@ -125,7 +128,28 @@ func renderFile(inputfilename string) error {
 	if err != nil {
 		return err
 	}
-
-	//log.Printf("%s, %s, %s, %s ", inputfilename, inputfilebasename, outputFileName, outputdir)
 	return nil
+}
+
+func getEnvVarForMapValue(indata interface{}) {
+	data := *indata.(*map[string]interface{})
+	for key, value := range *indata.(*map[string]interface{}) {
+		if s, ok := value.(string); ok {
+			if strings.HasPrefix(s, "$") {
+				envvar := os.Getenv(strings.TrimLeft(s, "$"))
+				if len(envvar) > 0 {
+					data[key] = envvar
+				}
+			}
+			continue
+		}
+
+		if v, ok := value.(interface{}); ok {
+			if d, ok := v.(map[string]interface{}); ok {
+				getEnvVarForMapValue(&d)
+			}
+
+		}
+
+	}
 }
