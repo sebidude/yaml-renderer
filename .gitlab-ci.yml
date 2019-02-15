@@ -1,0 +1,73 @@
+image: golang:1.10
+
+stages:
+  - build
+  - test
+  #- bundle
+  #- publish
+
+before_script:
+  - echo -e "machine gitlab.com\nlogin gitlab-ci-token\npassword " > ~/.netrc
+  - mkdir -p /go/src/gitlab.com/sebidude /go/src/_/builds
+  - cp -r  /go/src/gitlab.com/sebidude/yaml-renderer
+  - ln -s /go/src/gitlab.com/sebidude /go/src/_/builds/team-escrow
+
+windows-build:
+  stage: build
+  script:
+	- make build-windows
+  artifacts:
+	paths:
+	  - build/
+	expire_in: 1h
+
+
+linux-build:
+  stage: build
+  script:
+	- make build-linux
+  artifacts:
+	paths:
+	  - build/
+	expire_in: 1h
+  
+#test:
+#  stage: test
+#  dependencies:
+#  - linux-client
+#  script:
+#    - make test
+
+#windows-release:
+#  stage: bundle
+#  dependencies:
+#  - windows-client
+#  script:
+#    - make release-windows
+#  artifacts:
+#    paths:
+#      - release/windows/
+#    expire_in: 1h
+
+#linux-release:
+#  stage: bundle
+#  dependencies:
+#  - linux-client
+#  script:
+#    - make release-linux
+#  artifacts:
+#    paths:
+#      - release/linux/
+#    expire_in: 1h
+
+#pages:
+#  stage: publish
+#  dependencies:
+#  - linux-release
+#  - windows-release
+#  script:
+#    - make update-releasepage
+#  artifacts:
+#    paths:
+#    - public/
+#    expire_in: 1h

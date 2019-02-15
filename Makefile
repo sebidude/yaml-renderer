@@ -1,0 +1,48 @@
+APPNAME := yaml-renderer
+APPSRC := ./cmd/$(APPNAME)
+
+GITCOMMITHASH := $(shell git log --max-count=1 --pretty="format:%h" HEAD)
+GITCOMMIT := -X main.gitcommit=$(GITCOMMITHASH)
+
+VERSIONTAG := $(shell git describe --tags --abbrev=0)
+VERSION := -X main.appversion=$(VERSIONTAG)
+
+BUILDTIMEVALUE := $(shell date +%Y-%m-%dT%H:%M:%S%z)
+BUILDTIME := -X main.buildtime=$(BUILDTIMEVALUE)
+
+LDFLAGS := '-extldflags "-static" -d -s -w $(GITCOMMIT) $(VERSION) $(BUILDTIME)'
+LDFLAGS_WINDOWS := '-extldflags "-static" -s -w $(GITCOMMIT) $(VERSION) $(BUILDTIME)'
+all:info clean build
+
+clean:
+	rm -rf build
+
+info: 
+	@echo - appname:   $(APPNAME)
+	@echo - verison:   $(VERSIONTAG)
+	@echo - commit:    $(GITCOMMITHASH)
+	@echo - buildtime: $(BUILDTIMEVALUE) 
+
+dep:
+	@go get -v -d ./...
+build-linux: info dep
+	@echo Building for linux
+	@mkdir -p build/linux
+	@CGO_ENABLED=0 \
+	GOOS=linux \
+	go build -o build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) -a -ldflags $(LDFLAGS) $(APPSRC)
+	@cp build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) build/linux/$(APPNAME)
+
+build-windows: info dep
+	@echo Building for windows
+	@mkdir -p build/windows
+	@CGO_ENABLED=0 \
+	GOOS=windows \
+	go build -o build/windows/$(APPNAME)-$(VERSIONTAG).exe -a -ldflags $(LDFLAGS_WINDOWS) $(APPSRC)
+	@cd $(BASEDIR)/build/windows && \
+	sha256sum $(APPNAME)-$(VERSIONTAG).exe > $(APPNAME)-$(VERSIONTAG).exe.sha256sum
+
+image: 
+	@echo Creating docker image
+	@docker build -t $(APPNAME):$(VERSIONTAG)-$(GITCOMMITHASH) .
+
