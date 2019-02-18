@@ -40,11 +40,11 @@ image:
 	@docker build -t $(APPNAME):$(VERSIONTAG)-$(GITCOMMITHASH) .
 
 test: build-linux
-	TESTVAR=testvarbla ./build/linux/$(APPNAME) -o manifests -s txt -t test/templates -y test/values.yaml
-	grep "test1,test2,test3" manifests/file.txt
-	grep "foo-obj-name" manifests/file.txt
-	grep "testvarbla" manifests/file.txt
-	grep 1234 manifests/file.txt
-	grep '$$NOTSETVAR' manifests/file.txt
+	TESTVAR=testvarbla ./build/linux/$(APPNAME) -t test/templates -y test/values.yaml
+	grep "test1,test2,test3" rendered/file.txt
+	grep "foo-obj-name" rendered/file.txt
+	grep "testvarbla" rendered/file.txt
+	grep 1234 rendered/file.txt
+	grep '$$NOTSETVAR' rendered/file.txt
 
 

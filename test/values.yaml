@@ -6,3 +6,7 @@ data:
     env: $TESTVAR
     num: 1234
     notset: $NOTSETVAR
+  somelist:
+    - one
+    - two
+    - tree

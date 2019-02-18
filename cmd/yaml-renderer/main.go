@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/alecthomas/kingpin"
 	"github.com/ghodss/yaml"
 )
 
@@ -29,24 +29,20 @@ func main() {
 	log.Printf("gitcommit:  %s", gitcommit)
 	log.Printf("buildtime:  %s", buildtime)
 
-	flag.StringVar(&templateFile, "t", "", "The path to the template file/dir")
-	flag.StringVar(&yamlFile, "y", "", "The path to the yaml file with the data")
-	flag.StringVar(&suffix, "s", "", "Suffix for the rendered file.")
-	flag.StringVar(&outputdir, "o", "", "Output directory.")
+	app := kingpin.New("yaml-renderer", "Render templates with yaml variable input.")
 
-	flag.Usage = func() {
-		fmt.Printf("%s - Render template with yaml input.\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-	flag.Parse()
+	app.Flag("templates", "path to the template files or directory").
+		Short('t').
+		StringVar(&templateFile)
+	app.Flag("yaml", "path to the yaml value file").
+		Short('y').
+		StringVar(&yamlFile)
+	app.Flag("output", "path to the output direcory (will be created if not exists)").
+		Short('o').
+		Default("rendered").
+		StringVar(&outputdir)
 
-	if len(suffix) < 1 {
-		suffix = ".yaml"
-	}
-
-	if !strings.HasPrefix(suffix, ".") {
-		suffix = "." + suffix
-	}
+	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	info, err := os.Stat(templateFile)
 	if err != nil {
@@ -60,9 +56,6 @@ func main() {
 		}
 
 		for _, f := range files {
-			if !strings.HasSuffix(f.Name(), ".tpl") {
-				continue
-			}
 			err := renderFile(templateFile + "/" + f.Name())
 			if err != nil {
 				panic(err)
@@ -83,7 +76,7 @@ func renderFile(inputfilename string) error {
 		outputdir = "."
 	}
 
-	outputFileName := outputdir + "/" + strings.Replace(inputfilebasename, ".tpl", suffix, -1)
+	outputFileName := outputdir + "/" + inputfilebasename
 	if _, err := os.Stat(outputdir); os.IsNotExist(err) {
 		err := os.MkdirAll(outputdir, 0755)
 		if err != nil {
