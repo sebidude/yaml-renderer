@@ -10,8 +10,8 @@ import (
 	"strings"
 	"text/template"
 
-	"gopkg.in/alecthomas/kingpin.v2"
 	"github.com/ghodss/yaml"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -31,7 +31,7 @@ func main() {
 
 	app := kingpin.New("yaml-renderer", "Render templates with yaml variable input.")
 
-	app.Flag("templates", "path to the template files or directory").
+	app.Flag("templates", "path to the template file or directory").
 		Short('t').
 		StringVar(&templateFile)
 	app.Flag("yaml", "path to the yaml value file").
@@ -47,6 +47,10 @@ func main() {
 	info, err := os.Stat(templateFile)
 	if err != nil {
 		panic(err)
+	}
+
+	if outputdir == templateFile {
+		panic("output directory must not be template directory")
 	}
 
 	if info.IsDir() {
