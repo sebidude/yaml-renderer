@@ -1,5 +1,5 @@
 APPNAME := yaml-renderer
-APPSRC := ./cmd/$(APPNAME)
+APPSRC := .
 
 GITCOMMITHASH := $(shell git log --max-count=1 --pretty="format:%h" HEAD)
 GITCOMMIT := -X main.gitcommit=$(GITCOMMITHASH)
@@ -15,7 +15,7 @@ LDFLAGS := '-extldflags "-static" -d -s -w $(GITCOMMIT) $(VERSION) $(BUILDTIME)'
 all:info clean build
 
 clean:
-	rm -rf build
+	rm -rf build rendered
 
 info: 
 	@echo - appname:   $(APPNAME)

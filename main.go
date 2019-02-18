@@ -10,7 +10,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/alecthomas/kingpin"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"github.com/ghodss/yaml"
 )
 
