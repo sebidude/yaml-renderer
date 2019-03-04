@@ -113,7 +113,7 @@ func renderFile(inputfilename string) error {
 	if err != nil {
 		return err
 	}
-	t := template.Must(template.New(inputfilename).Parse(string(content)))
+	t := template.Must(template.New(inputfilename).Funcs(template.FuncMap{"N": N}).Parse(string(content)))
 	var renderedBytes bytes.Buffer
 	err = t.Execute(&renderedBytes, yamlData)
 	if err != nil {
@@ -149,4 +149,23 @@ func getEnvVarForMapValue(indata interface{}) {
 		}
 
 	}
+}
+
+func N(end interface{}) (stream chan int) {
+	e := 0
+	switch end.(type) {
+	case float64:
+		e = int(end.(float64))
+	case int:
+		e = end.(int)
+	}
+
+	stream = make(chan int)
+	go func() {
+		for i := 0; i < e; i++ {
+			stream <- i
+		}
+		close(stream)
+	}()
+	return
 }
