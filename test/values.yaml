@@ -4,6 +4,7 @@ data:
   obj:
     name: "foo-obj-name"
     env: $TESTVAR
+    list: [$TESTLIST,"bla",5, [$TESTLIST]]
     num: 1234
     notset: $NOTSETVAR
   somelist:

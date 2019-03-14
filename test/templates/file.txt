@@ -6,6 +6,12 @@ Attribute "name" of obj: {{ .data.obj.name }}
 Envvar: {{ .data.obj.env }}
 And here is a number: {{ .data.obj.num }}
 This var must not be substituted: {{ .data.obj.notset }}
+A list from env:
+{{- range .data.obj.list }}
+- {{ . -}}
+{{end }}
+
+A list:
 {{ range .data.somelist }} 
 - {{ . -}}
 {{end}}

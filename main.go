@@ -60,7 +60,11 @@ func main() {
 		}
 
 		for _, f := range files {
-			err := renderFile(templateFile + "/" + f.Name())
+			i, err := os.Stat(templateFile + "/" + f.Name())
+			if i.IsDir() {
+				continue
+			}
+			err = renderFile(templateFile + "/" + f.Name())
 			if err != nil {
 				panic(err)
 			}
@@ -131,6 +135,41 @@ func renderFile(inputfilename string) error {
 func getEnvVarForMapValue(indata interface{}) {
 	data := *indata.(*map[string]interface{})
 	for key, value := range *indata.(*map[string]interface{}) {
+
+		fmt.Printf("%#v\n", value)
+		if v, ok := value.([]interface{}); ok {
+			var list []interface{}
+			for _, s := range v {
+				if elm, ok := s.(string); ok {
+					if strings.HasPrefix(elm, "$") {
+						envvar := os.Getenv(strings.TrimLeft(elm, "$"))
+						if len(envvar) > 0 {
+							for _, ie := range strings.Split(envvar, ",") {
+								if len(ie) > 0 {
+									list = append(list, ie)
+								}
+							}
+						}
+					} else {
+						if elm, ok := s.(string); ok {
+							if len(elm) > 0 {
+								list = append(list, elm)
+							}
+						}
+					}
+				} else {
+					list = append(list, s)
+				}
+
+			}
+			if len(list) > 0 {
+				data[key] = list
+			} else {
+				data[key] = value
+			}
+
+			continue
+		}
 		if s, ok := value.(string); ok {
 			if strings.HasPrefix(s, "$") {
 				envvar := os.Getenv(strings.TrimLeft(s, "$"))
