@@ -135,8 +135,6 @@ func renderFile(inputfilename string) error {
 func getEnvVarForMapValue(indata interface{}) {
 	data := *indata.(*map[string]interface{})
 	for key, value := range *indata.(*map[string]interface{}) {
-
-		fmt.Printf("%#v\n", value)
 		if v, ok := value.([]interface{}); ok {
 			var list []interface{}
 			for _, s := range v {
