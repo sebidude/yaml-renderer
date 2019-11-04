@@ -1,11 +1,14 @@
 Hello world.
 
+more-data is {{ ".more-data.name" }}
 this is {{ .data.name }}
 I can haz tags: {{ .data.taglist }}
 Attribute "name" of obj: {{ .data.obj.name }}
 Envvar: {{ .data.obj.env }}
+Moreenvvar: {{ .data.obj.moreenv }}
 And here is a number: {{ .data.obj.num }}
 This var must not be substituted: {{ .data.obj.notset }}
+As well as this one: {{ .data.obj.alsonotset }}
 A list from env:
 {{- range .data.obj.list }}
 - {{ . -}}

@@ -46,5 +46,6 @@ test: build-linux
 	grep "testvarbla" rendered/file.txt
 	grep 1234 rendered/file.txt
 	grep '$$NOTSETVAR' rendered/file.txt
+	grep '$${NOTSETVAR}' rendered/file.txt
 
 

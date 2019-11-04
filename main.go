@@ -175,6 +175,14 @@ func getEnvVarForMapValue(indata interface{}) {
 					data[key] = envvar
 				}
 			}
+			if strings.HasPrefix(s, "${") {
+				envvarname := strings.TrimLeft(s, "${")
+				envvarname = strings.TrimRight(envvarname, "}")
+				envvar := os.Getenv(envvarname)
+				if len(envvar) > 0 {
+					data[key] = envvar
+				}
+			}
 			continue
 		}
 
