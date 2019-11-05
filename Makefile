@@ -35,9 +35,11 @@ build-linux: info dep
 	@cp build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) build/linux/$(APPNAME)
 
 
-image: 
-	@echo Creating docker image
-	@docker build -t $(APPNAME):$(VERSIONTAG)-$(GITCOMMITHASH) .
+image:
+	docker build -t sebidude/yaml-renderer:$(VERSIONTAG) .
+
+publish:
+	docker push sebidude/yaml-renderer:$(VERSIONTAG) 
 
 test: build-linux
 	TESTVAR=testvarbla ./build/linux/$(APPNAME) -t test/templates -y test/values.yaml
