@@ -36,12 +36,6 @@ build-linux: info dep
 	@cp build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) build/linux/$(APPNAME)
 
 
-image:
-	docker build -t sebidude/yaml-renderer:$(VERSIONTAG) .
-
-publish:
-	docker push sebidude/yaml-renderer:$(VERSIONTAG) 
-
 test:
 	TESTVAR=testvarbla go run main.go -t test/templates -y test/values.yaml
 	grep "test1,test2,test3" rendered/file.txt
