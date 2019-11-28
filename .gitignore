@@ -13,3 +13,4 @@
 build/*
 !test/templates/*
 manifests
+rendered
