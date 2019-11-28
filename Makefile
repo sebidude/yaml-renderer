@@ -19,7 +19,7 @@ clean:
 
 info: 
 	@echo - appname:   $(APPNAME)
-	@echo - verison:   $(VERSIONTAG)
+	@echo - version:   $(VERSIONTAG)
 	@echo - commit:    $(GITCOMMITHASH)
 	@echo - buildtime: $(BUILDTIMEVALUE) 
 
@@ -29,7 +29,7 @@ dep:
 build-linux: info dep
 	@echo Building for linux
 	@mkdir -p build/linux
-	@CGO_ENABLED=0 \
+	CGO_ENABLED=0 \
 	GOOS=linux \
 	go build -o build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) -a -ldflags $(LDFLAGS) $(APPSRC)
 	@cp build/linux/$(APPNAME)-$(VERSIONTAG)-$(GITCOMMITHASH) build/linux/$(APPNAME)
