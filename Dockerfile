@@ -5,7 +5,7 @@ RUN mkdir /build
 WORKDIR /build
 RUN git clone https://github.com/sebidude/yaml-renderer.git
 WORKDIR /build/yaml-renderer
-RUN make build-linux
+RUN make test build-linux
 
 FROM scratch
 COPY --from=builder /build/yaml-renderer/build/linux/yaml-renderer /usr/bin/yaml-renderer

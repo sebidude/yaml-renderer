@@ -1,3 +1,4 @@
+.PHONY: all test clean
 APPNAME := yaml-renderer
 APPSRC := .
 
@@ -41,8 +42,8 @@ image:
 publish:
 	docker push sebidude/yaml-renderer:$(VERSIONTAG) 
 
-test: build-linux
-	TESTVAR=testvarbla ./build/linux/$(APPNAME) -t test/templates -y test/values.yaml
+test:
+	TESTVAR=testvarbl go run main.go -t test/templates -y test/values.yaml
 	grep "test1,test2,test3" rendered/file.txt
 	grep "foo-obj-name" rendered/file.txt
 	grep "testvarbla" rendered/file.txt
