@@ -50,5 +50,3 @@ test:
 	grep 1234 rendered/file.txt
 	grep '$$NOTSETVAR' rendered/file.txt
 	grep '$${NOTSETVAR}' rendered/file.txt
-
-
