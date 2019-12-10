@@ -4,9 +4,11 @@ data:
   obj:
     name: "foo-obj-name"
     env: $TESTVAR
-    moreenv: ${TESTVAR}
+    moreenv: foo-${TESTVAR}-$TESTVAR2
     list: [$TESTLIST,"bla",5, [$TESTLIST]]
     num: 1234
+    nolist: ${TESTLIST}
+    justvar: ${TESTVAR}
     notset: $NOTSETVAR
     alsonotset: ${NOTSETVAR}
   somelist:

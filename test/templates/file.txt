@@ -6,6 +6,8 @@ I can haz tags: {{ .data.taglist }}
 Attribute "name" of obj: {{ .data.obj.name }}
 Envvar: {{ .data.obj.env }}
 Moreenvvar: {{ .data.obj.moreenv }}
+Not a list: {{ .data.obj.nolist }}
+Just a var: {{ .data.obj.justvar }}
 And here is a number: {{ .data.obj.num }}
 This var must not be substituted: {{ .data.obj.notset }}
 As well as this one: {{ .data.obj.alsonotset }}

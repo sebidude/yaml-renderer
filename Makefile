@@ -37,10 +37,13 @@ build-linux: info dep
 
 
 test:
-	TESTVAR=testvarbla go run main.go -t test/templates -y test/values.yaml
+	TESTVAR=testvarbla TESTLIST="testlist1,testlist2" TESTVAR2="var2" go run main.go -t test/templates -y test/values.yaml
 	grep "test1,test2,test3" rendered/file.txt
 	grep "foo-obj-name" rendered/file.txt
 	grep "testvarbla" rendered/file.txt
+	grep "foo-testvarbla-var2" rendered/file.txt
+	grep "Just a var: testvarbla" rendered/file.txt
+	grep "Not a list: testlist1,testlist2" rendered/file.txt
 	grep 1234 rendered/file.txt
 	grep '$$NOTSETVAR' rendered/file.txt
 	grep '$${NOTSETVAR}' rendered/file.txt

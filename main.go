@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -22,6 +23,8 @@ var (
 	yamlFile     string
 	suffix       string
 	outputdir    string
+	rematch      = `\$\{?([a-zA-Z0-9_]*)\}?`
+	envVarMatch  *regexp.Regexp
 )
 
 func main() {
@@ -42,6 +45,7 @@ func main() {
 		Default("rendered").
 		StringVar(&outputdir)
 
+	envVarMatch = regexp.MustCompile(rematch)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	info, err := os.Stat(templateFile)
@@ -134,24 +138,29 @@ func renderFile(inputfilename string) error {
 
 func getEnvVarForMapValue(indata interface{}) {
 	data := *indata.(*map[string]interface{})
+
 	for key, value := range *indata.(*map[string]interface{}) {
 		if v, ok := value.([]interface{}); ok {
 			var list []interface{}
 			for _, s := range v {
 				if elm, ok := s.(string); ok {
-					if strings.HasPrefix(elm, "$") {
-						envvar := os.Getenv(strings.TrimLeft(elm, "$"))
+					// we need to regexp match the string and iterate over the matches here
+					matches := envVarMatch.FindAllStringSubmatch(elm, -1)
+					for _, m := range matches {
+						if len(m) < 2 {
+							if elm, ok := s.(string); ok {
+								if len(elm) > 0 {
+									list = append(list, elm)
+								}
+							}
+							continue
+						}
+						envvar := os.Getenv(m[1])
 						if len(envvar) > 0 {
 							for _, ie := range strings.Split(envvar, ",") {
 								if len(ie) > 0 {
 									list = append(list, ie)
 								}
-							}
-						}
-					} else {
-						if elm, ok := s.(string); ok {
-							if len(elm) > 0 {
-								list = append(list, elm)
 							}
 						}
 					}
@@ -168,21 +177,20 @@ func getEnvVarForMapValue(indata interface{}) {
 
 			continue
 		}
+
 		if s, ok := value.(string); ok {
-			if strings.HasPrefix(s, "$") {
-				envvar := os.Getenv(strings.TrimLeft(s, "$"))
-				if len(envvar) > 0 {
-					data[key] = envvar
+			// we need to regexp match the string and iterate over the matches here
+			matches := envVarMatch.FindAllStringSubmatch(s, -1)
+			envvarval := s
+			for _, m := range matches {
+				if len(m) > 1 {
+					envvar := os.Getenv(m[1])
+					if len(envvar) > 0 {
+						envvarval = strings.Replace(envvarval, m[0], envvar, -1)
+					}
 				}
 			}
-			if strings.HasPrefix(s, "${") {
-				envvarname := strings.TrimLeft(s, "${")
-				envvarname = strings.TrimRight(envvarname, "}")
-				envvar := os.Getenv(envvarname)
-				if len(envvar) > 0 {
-					data[key] = envvar
-				}
-			}
+			data[key] = envvarval
 			continue
 		}
 
