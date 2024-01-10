@@ -11,8 +11,8 @@ import (
 	"strings"
 	"text/template"
 
+	kingpin "github.com/alecthomas/kingpin/v2"
 	"github.com/ghodss/yaml"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
